@@ -1,0 +1,70 @@
+import praw
+import random
+
+def get_random_reply():
+    replies = ["The Incas of Peru were the first to cultivate potatoes around 8000 BC to 5000 BC.",
+               "In 1536 Spanish Conquistadors discovered just how delicious potatoes were and carried them back to Europe.",
+               "In 1589 Sir Walter Raleigh introduced potatoes to Ireland.  Early growers discovered that they could provide food for ten people off of just one acre of land, much better than wheat or oats.",
+               "Potatoes came to the colonies in 1621 when the Governor of Bermuda, Nathaniel Butler sent two large cedar chests containing potatoes to Jamestown.",
+               "Marie Antoinette wore potato blossoms in her hair!  Let them eat spuds!",
+               "The first permanent potato patches on US soil were established in 1719 near Londonderry, New Hampshire by Scotch-Irish immigrants.",
+               "Potatoes were popularized in France in the 18th century.  King Louis XIV and Antoine Parmentier hosted a dinner that featured only dishes with potato.  Benjamin Franklin was in attendance at the 1767 dinner.  Twenty different dishes were served!",
+               "In Shakespeares time the potato was known simply as the apple of love.",
+               "Vincent Van Gough painted four still-life paintings featuring potatoes.",
+               "Thank Thomas Jefferson next time you have french fries.  He served them in the White House!",
+                "Potatoes didnt arrive in Idaho until 1836.",
+                "The Irish potato famine occurred in the 1840s, caused by the oomycete, Phytophthora infestans, meaning \"plant destroyer.\"  Before the disease struck, Irish families ate nearly ten pounds of potato a day.  Almost one million people died from starvation or disease during that time period.",
+                "Potatoes first appeared in Montana in 1841. The first crop was grown in the Bitteroot Valley at St. Marys Mission by Father DeSmet.",
+                "A complaining railroad magnate earned a chastisement for complaints from chef George Crum, resulting in Saratoga Crunch Chips, known to us as potato chips in 1853. A delicious punishment!",
+                "During the gold rush, potatoes were highly valued.  At a time when gold was more plentiful than nutrition sources, you might say that potatoes were worth their weight in gold!",
+                "In 1860, the first Montana commercial crop was grown in Virginia City at the mining camps.  This was especially significant because this was miners only source of vitamin C (45 % from just one medium spud)!",
+                "Russet Burbank has been around since 1872!",
+                "In 1903, Parker Brothers had a game called The Potato Race.",
+                "In Germany there is a monument to the potato with the inscription  To God and Francis Drake, who brought to Europe for the everlasting benefit of the poor-the Potato.",
+                "In 1974 Eric Jenkins grew 370 pounds from a single potato plant!",
+                "Potatoes were the first vegetable grown in space in 1995.",
+                "The word potato comes from the Spanish word patata.",
+                "Potato is the 4th most important crop worldwide (but 1st in our book!)",
+                "The Irish Potato famine gave rise to the field of Plant Pathology!",
+                "35% of the potato crop is turned into french fries, 28% is used for fresh, and 13% goes to chips!",
+                "The Potato Museum in Washington DC contains 2000 potato artifacts.",
+                "On average, US residents consume 110 pounds of potatoes per year.  Europeans consume twice that much!",
+                "A potato has more potassium than a banana!",
+                "2008 was the U.N. International Year of the Potato.",
+                "August 13 is National Potato Day, dont forget to celebrate!"]
+    index = random.randint(0,28)
+    reply = "Thank you for subscribing to potato facts! Did you know: " + replies[index] + " Awesome huh? \n\nTo unsubscribe from potato facts, reply with \"I love potatoes!\" \n\n*This is a bot. A crappy bot that just looks to see if you've typed 'potato' into your comment. Sorry. Reply 'Bad Bot' to shun me.*"
+    return reply
+
+def main():
+
+    r = praw.Reddit('bot1')
+    print(r.user.me())
+
+    comment_history = open("chist.txt","a+")
+
+    subreddit = r.subreddit("all")
+
+    for submission in subreddit.rising(limit=25):
+        comments = submission.comments
+        submission.comments.replace_more(limit=None)
+        for comment in submission.comments.list():
+            if "potato" in comment.body:
+                if comment.author != "potato__bot":
+                    print("Title: ", submission.title)
+                    print("------------------------\n")
+                    print(comment.body)
+                    print("|***************************|\n")
+                    print("id: " + comment.id)
+                    print("reply: \n")
+                    if comment.id not in comment_history.read():
+                        r = get_random_reply()
+                        print(r)
+                        comment.reply(r)
+                        comment_history.write(comment.id + " ")
+                    else:
+                        print("Already commented. Skipping.....")
+        print("|||||||||||||||||||||||||||||||\n")
+
+if __name__ == '__main__':
+    main()
